@@ -1,39 +1,3 @@
-To integrate the **Loan Calculator** and **Registration Form** features into the Shinhan Bank webpage (https://shinhanfinance-congtytaichinh.github.io/shinhanbank/) while preserving the original interface, I’ll modify the provided `index.html` to include:
-
-1. **Loan Calculator Button**: Add a "Tính Khoản Vay" button that opens a modal with the calculator from `tinhkhoangvay.txt`.
-2. **Registration Form**: Add a "Đăng Ký Hồ Sơ" button that opens a multi-step registration form based on `nutdangky.txt`, including contract and disbursement condition displays from the provided PDFs.
-3. **Preserve Original Interface**: Retain the exact layout, styles, and content as shown in the provided `<DOCUMENT>` and GitHub page, ensuring no changes to the design, multilingual support, or other features.
-
-### Approach
-
-- **Loan Calculator**:
-  - Replace the existing "Tính khoản vay" link in the "Giới Thiệu" section with a button that opens a modal containing the calculator from `tinhkhoangvay.txt`.
-  - Style the modal to match the Shinhan Bank design (blue `#004b8d`, orange `#f28c38`, and light blue `#e6f0fa` backgrounds).
-
-- **Registration Form**:
-  - Replace the "Đăng ký ngay" link in the "Giới Thiệu" section with a button that opens a modal with the 9-step registration process from `nutdangky.txt`.
-  - The 9 steps are interpreted as:
-    1. Personal Info
-    2. ID Info
-    3. Photo Upload
-    4. Face Verification
-    5. Loan Info
-    6. Success Confirmation
-    7. Contract Display (from `Mới hợp đồng mới-đã nén-compressed.pdf`)
-    8. Disbursement Conditions (from `Ảnh điều kiện giảy ngân-compressed.pdf`)
-    9. Interest/Fee Agreement and Branch Lookup
-  - Use `html2pdf.js` to allow downloading the contract and disbursement conditions as PDFs.
-
-- **Preserve Original Interface**:
-  - Keep the HTML structure, CSS, and content from the provided `<DOCUMENT>` and GitHub page.
-  - Add modals for the new features without altering the layout or styles.
-  - Ensure compatibility with existing JavaScript (e.g., service worker, multilingual support).
-
-### Modified `index.html`
-
-Below is the updated `index.html` that integrates the loan calculator and registration form while preserving the original interface. The code incorporates the calculator from `tinhkhoangvay.txt`, the registration form from `nutdangky.txt`, and contract/disbursement displays from the PDFs.
-
-```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
