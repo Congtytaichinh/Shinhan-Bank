@@ -8,7 +8,7 @@
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Vay tiêu dùng tín chấp | Shinhan Bank">
     <meta property="og:description" content="Vay tiêu dùng, vay mua nhà, vay mua xe với lãi suất từ 1.9%/năm, hạn mức đến 600 triệu đồng. Đăng ký online nhanh chóng.">
-    <meta property="og:image" content="https://example.com/logo.png">
+    <meta property="og:image" content="public/logo.png">
     <meta property="og:type" content="article">
 
     <!-- Favicon -->
@@ -314,7 +314,7 @@
             right: 20px;
             width: 100px;
             height: 100px;
-            background: url('https://example.com/shinhan-life-stamp.png') no-repeat center;
+            background: url('public/shinhan-life-stamp.png') no-repeat center;
             background-size: contain;
             opacity: 0.8;
         }
@@ -335,7 +335,7 @@
             margin-bottom: 20px;
         }
         .fireworks {
-            background: url('https://example.com/fireworks.gif') center no-repeat;
+            background: url('public/fireworks.gif') center no-repeat;
             background-size: cover;
             height: 150px;
             margin-bottom: 20px;
@@ -448,7 +448,7 @@
     <div id="loanCalculatorModal" style="display: none;">
         <div class="modal-overlay" onclick="closeLoanCalculator()"></div>
         <div class="modal-content">
-            <div class="modal-title">Tính Khoản Vay Shinhan Bank</div>
+            <div className="modal-title">Tính Khoản Vay Shinhan Bank</div>
             <form id="loanForm">
                 <label for="loanType">Loại khoản vay:</label>
                 <select id="loanType" onchange="updateInterestRate()">
@@ -480,6 +480,15 @@
     </div>
 
     <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+
         // Initialize EmailJS
         emailjs.init("c-Ms5MjWbitpDBb-E");
 
@@ -912,10 +921,12 @@
                             React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Điền thông tin cá nhân chính xác. Các trường có (*) là bắt buộc.'),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'fullName', placeholder: 'Họ và tên (*)', value: formData.fullName, onChange: handleInputChange, className: errors.fullName ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Họ và tên không quá 50 ký tự'),
                                 errors.fullName && React.createElement('div', { className: 'error-message' }, errors.fullName)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { type: 'date', name: 'dob', value: formData.dob, onChange: handleInputChange, className: errors.dob ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập ngày sinh (DD/MM/YYYY)'),
                                 errors.dob && React.createElement('div', { className: 'error-message' }, errors.dob)
                             ),
                             React.createElement('div', { className: 'input-container' },
@@ -925,34 +936,42 @@
                                     React.createElement('option', { value: 'Nữ' }, 'Nữ'),
                                     React.createElement('option', { value: 'Khác' }, 'Khác')
                                 ),
+                                React.createElement('span', { className: 'tooltip' }, 'Chọn giới tính của bạn'),
                                 errors.gender && React.createElement('div', { className: 'error-message' }, errors.gender)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'phone', placeholder: 'Số điện thoại (*)', value: formData.phone, onChange: handleInputChange, className: errors.phone ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Số điện thoại Việt Nam hợp lệ'),
                                 errors.phone && React.createElement('div', { className: 'error-message' }, errors.phone)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'email', placeholder: 'Email (*)', value: formData.email, onChange: handleInputChange, className: errors.email ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập email hợp lệ'),
                                 errors.email && React.createElement('div', { className: 'error-message' }, errors.email)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { type: 'number', name: 'monthlyIncome', placeholder: 'Thu nhập hàng tháng (VNĐ) (*)', value: formData.monthlyIncome, onChange: handleInputChange, className: errors.monthlyIncome ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập thu nhập hàng tháng (VNĐ)'),
                                 errors.monthlyIncome && React.createElement('div', { className: 'error-message' }, errors.monthlyIncome)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'permanentAddress', placeholder: 'Địa chỉ thường trú (*)', value: formData.permanentAddress, onChange: handleInputChange, className: errors.permanentAddress ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập địa chỉ thường trú'),
                                 errors.permanentAddress && React.createElement('div', { className: 'error-message' }, errors.permanentAddress)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'temporaryAddress', placeholder: 'Địa chỉ tạm trú (*)', value: formData.temporaryAddress, onChange: handleInputChange, className: errors.temporaryAddress ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập địa chỉ tạm trú'),
                                 errors.temporaryAddress && React.createElement('div', { className: 'error-message' }, errors.temporaryAddress)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'occupation', placeholder: 'Nghề nghiệp (*)', value: formData.occupation, onChange: handleInputChange, className: errors.occupation ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập nghề nghiệp hiện tại'),
                                 errors.occupation && React.createElement('div', { className: 'error-message' }, errors.occupation)
                             ),
                             React.createElement('div', { className: 'input-container' },
-                                React.createElement('input', { name: 'referralCode', placeholder: 'Mã giới thiệu (nếu có)', value: formData.referralCode, onChange: handleInputChange })
+                                React.createElement('input', { name: 'referralCode', placeholder: 'Mã giới thiệu (nếu có)', value: formData.referralCode, onChange: handleInputChange }),
+                                React.createElement('span', { className: 'tooltip' }, 'Mã giới thiệu (tùy chọn)')
                             ),
                             React.createElement('div', { className: 'faq-container' },
                                 React.createElement('h3', { className: 'text-sm font-semibold mb-2' }, 'Câu hỏi thường gặp'),
@@ -972,14 +991,17 @@
                             React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin giấy tờ tùy thân chính xác.'),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'idNumber', placeholder: 'Số CCCD/CMND (*)', value: formData.idNumber, onChange: handleInputChange, className: errors.idNumber ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Số CCCD/CMND chỉ chứa chữ và số'),
                                 errors.idNumber && React.createElement('div', { className: 'error-message' }, errors.idNumber)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { type: 'date', name: 'idIssueDate', value: formData.idIssueDate, onChange: handleInputChange, className: errors.idIssueDate ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập ngày cấp CCCD/CMND'),
                                 errors.idIssueDate && React.createElement('div', { className: 'error-message' }, errors.idIssueDate)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'idIssuePlace', placeholder: 'Nơi cấp (*)', value: formData.idIssuePlace, onChange: handleInputChange, className: errors.idIssuePlace ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập nơi cấp trên giấy tờ'),
                                 errors.idIssuePlace && React.createElement('div', { className: 'error-message' }, errors.idIssuePlace)
                             ),
                             React.createElement('div', { className: 'faq-container' },
@@ -1003,18 +1025,21 @@
                                 React.createElement('label', null, 'Ảnh CCCD/CMND (Mặt trước) (*)'),
                                 React.createElement('input', { type: 'file', name: 'idPhotoFront', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.idPhotoFront ? 'error' : '' }),
                                 formData.idPhotoFront && React.createElement('img', { src: URL.createObjectURL(formData.idPhotoFront), className: 'photo-preview', alt: 'Mặt trước CCCD' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Chụp ảnh mặt trước, rõ nét'),
                                 errors.idPhotoFront && React.createElement('div', { className: 'error-message' }, errors.idPhotoFront)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('label', null, 'Ảnh CCCD/CMND (Mặt sau) (*)'),
                                 React.createElement('input', { type: 'file', name: 'idPhotoBack', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.idPhotoBack ? 'error' : '' }),
                                 formData.idPhotoBack && React.createElement('img', { src: URL.createObjectURL(formData.idPhotoBack), className: 'photo-preview', alt: 'Mặt sau CCCD' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Chụp ảnh mặt sau, rõ nét'),
                                 errors.idPhotoBack && React.createElement('div', { className: 'error-message' }, errors.idPhotoBack)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('label', null, 'Ảnh thẻ ATM (*)'),
                                 React.createElement('input', { type: 'file', name: 'atmPhoto', accept: 'image/jpeg,image/png', onChange: handleFileUpload, className: errors.atmPhoto ? 'error' : '' }),
                                 formData.atmPhoto && React.createElement('img', { src: URL.createObjectURL(formData.atmPhoto), className: 'photo-preview', alt: 'Thẻ ATM' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Chụp ảnh thẻ ATM, rõ số thẻ'),
                                 errors.atmPhoto && React.createElement('div', { className: 'error-message' }, errors.atmPhoto)
                             ),
                             React.createElement('div', { className: 'faq-container' },
@@ -1054,10 +1079,12 @@
                             React.createElement('p', { className: 'mb-4' }, React.createElement('strong', null, 'Hướng dẫn:'), ' Cung cấp thông tin khoản vay chính xác.'),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { type: 'number', name: 'loanAmount', placeholder: 'Số tiền vay (VNĐ) (*)', value: formData.loanAmount, onChange: handleInputChange, className: errors.loanAmount ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Số tiền từ 30 triệu đến 600 triệu VNĐ'),
                                 errors.loanAmount && React.createElement('div', { className: 'error-message' }, errors.loanAmount)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { type: 'number', name: 'loanTerm', placeholder: 'Thời hạn vay (tháng) (*)', value: formData.loanTerm, onChange: handleInputChange, className: errors.loanTerm ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Thời hạn từ 12 đến 60 tháng'),
                                 errors.loanTerm && React.createElement('div', { className: 'error-message' }, errors.loanTerm)
                             ),
                             React.createElement('div', { className: 'input-container' },
@@ -1065,6 +1092,7 @@
                                     React.createElement('option', { value: '' }, 'Chọn loại vay (*)'),
                                     loanPackages.map(pkg => React.createElement('option', { key: pkg.value, value: pkg.value }, pkg.label))
                                 ),
+                                React.createElement('span', { className: 'tooltip' }, 'Chọn loại vay phù hợp'),
                                 errors.loanType && React.createElement('div', { className: 'error-message' }, errors.loanType)
                             ),
                             formData.loanType && React.createElement('div', { className: 'loan-info' },
@@ -1073,14 +1101,17 @@
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'bankAccountNumber', placeholder: 'Số tài khoản ngân hàng (*)', value: formData.bankAccountNumber, onChange: handleInputChange, className: errors.bankAccountNumber ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập số tài khoản ngân hàng hợp lệ'),
                                 errors.bankAccountNumber && React.createElement('div', { className: 'error-message' }, errors.bankAccountNumber)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'bankAccountName', placeholder: 'Họ và tên chủ tài khoản (*)', value: formData.bankAccountName, onChange: handleInputChange, className: errors.bankAccountName ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Họ và tên chủ tài khoản phải khớp với tài khoản ngân hàng'),
                                 errors.bankAccountName && React.createElement('div', { className: 'error-message' }, errors.bankAccountName)
                             ),
                             React.createElement('div', { className: 'input-container' },
                                 React.createElement('input', { name: 'bankName', placeholder: 'Tên ngân hàng (*)', value: formData.bankName, onChange: handleInputChange, className: errors.bankName ? 'error' : '' }),
+                                React.createElement('span', { className: 'tooltip' }, 'Nhập tên ngân hàng (ví dụ: Vietcombank, Techcombank)'),
                                 errors.bankName && React.createElement('div', { className: 'error-message' }, errors.bankName)
                             ),
                             monthlyPayment > 0 && React.createElement('div', { className: 'mt-4 p-4 bg-gray-100 rounded-lg' },
@@ -1116,7 +1147,7 @@
                 showContract && React.createElement('div', { className: 'modal-content-lg' },
                     React.createElement('div', { className: 'modal-title' }, 'Hồ sơ và hợp đồng vay'),
                     React.createElement('div', { className: 'contract-container', id: 'contract-vay' },
-                        React.createElement('img', { src: 'https://example.com/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
+                        React.createElement('img', { src: 'public/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
                         React.createElement('h4', { style: { textAlign: 'center' } }, 'HỢP ĐỒNG CHO VAY'),
                         React.createElement('p', null, React.createElement('strong', null, 'Số hợp đồng:'), ' BANK-2025-', contractId),
                         React.createElement('p', null, React.createElement('strong', null, 'Ngày:'), ' ', new Date().toISOString().split('T')[0]),
@@ -1152,8 +1183,8 @@
                     React.createElement('p', null, React.createElement('strong', null, 'Khuyến khích:'), ' Vui lòng tải hợp đồng về máy để lưu trữ và tham khảo.'),
                     React.createElement('a', { className: 'download-link', onClick: () => downloadContract('contract-vay', 'HopDongVay.pdf') }, 'Tải hợp đồng vay (PDF)'),
                     React.createElement('div', { className: 'disbursement-container', id: 'disbursement-confirmation' },
-                        React.createElement('img', { src: 'https://example.com/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
-                        React.createElement('h4', { style: { textAlign: 'center' } }, 'GIẤY XÁC NHẬN ĐIỀU KIỆN GIẢI NGÂN'),
+                        React.createElement('img', { src: 'public/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
+                       React.createElement('h4', { style: { textAlign: 'center' } }, 'GIẤY XÁC NHẬN ĐIỀU KIỆN GIẢI NGÂN'),
                         React.createElement('p', null, React.createElement('strong', null, 'Số hợp đồng:'), ' BANK-2025-', contractId),
                         React.createElement('p', null, React.createElement('strong', null, 'Ngày:'), ' ', new Date().toISOString().split('T')[0]),
                         React.createElement('table', { className: 'contract-table' },
@@ -1167,7 +1198,6 @@
                             React.createElement('tr', null, React.createElement('th', null, 'Họ và tên chủ tài khoản'), React.createElement('td', null, formData.bankAccountName || '')),
                             React.createElement('tr', null, React.createElement('th', null, 'Tên ngân hàng'), React.createElement('td', null, formData.bankName || ''))
                         ),
-                       React.createElement('tr', null, React.createElement('th', null, 'Tên ngân hàng'), React.createElement('td', null, formData.bankName || ''))),
                         React.createElement('h5', { className: 'mt-4 font-semibold' }, 'Điều kiện giải ngân'),
                         React.createElement('p', null, `Quý khách ${formData.fullName || ''} đã duyệt hồ sơ với số tiền ${(parseInt(formData.loanAmount) || 0).toLocaleString()} VNĐ và thời hạn ${formData.loanTerm || '0'} tháng, lãi suất ${(selectedInterestRate * 100).toFixed(1)}%/năm tại Ngân hàng Shinhan. Để được giải ngân số tiền, quý khách cần đáp ứng các điều kiện sau:`),
                         React.createElement('ul', { className: 'list-disc ml-6' },
@@ -1188,7 +1218,7 @@
                     React.createElement('p', null, React.createElement('strong', null, 'Khuyến khích:'), ' Vui lòng tải giấy xác nhận về máy để lưu trữ và tham khảo.'),
                     React.createElement('a', { className: 'download-link', onClick: () => downloadContract('disbursement-confirmation', 'GiayXacNhanGiaiNgan.pdf') }, 'Tải giấy xác nhận (PDF)'),
                     React.createElement('div', { className: 'contract-container', id: 'interest-fee-agreement' },
-                        React.createElement('img', { src: 'https://example.com/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
+                        React.createElement('img', { src: 'public/logo.png', className: 'logo-shinhan', alt: 'Bank Logo' }),
                         React.createElement('h4', { style: { textAlign: 'center' } }, 'KHUNG LÃI SUẤT VÀ BIỂU PHÍ'),
                         React.createElement('p', null, React.createElement('strong', null, 'Số hợp đồng:'), ' BANK-2025-', contractId),
                         React.createElement('p', null, React.createElement('strong', null, 'Ngày:'), ' ', new Date().toISOString().split('T')[0]),
